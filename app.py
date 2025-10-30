@@ -24,11 +24,23 @@ def schedulePage():
     cursor.execute(sql, (ID,))
     constData = cursor.fetchall()
 
-    sql = "SELECT course_id, semester, year FROM student JOIN takes ON student.ID = takes.ID WHERE student.ID = %s"
+    sql = "SELECT DISTINCT CAST(year as unsigned) AS year FROM student JOIN takes ON student.ID = takes.ID WHERE student.ID = %s"
     cursor.execute(sql, (ID,))
+    availableYears = [row[0] for row in cursor.fetchall()]
+
+    yearFilter = request.args.get('selectYear')
+    print(yearFilter)
+
+    if yearFilter and yearFilter != "0":
+        sql = "SELECT course_id, semester, year FROM student JOIN takes ON student.ID = takes.ID WHERE student.ID = %s AND takes.year = %s"
+        cursor.execute(sql, (ID, int(yearFilter)))
+    else:
+        sql = "SELECT course_id, semester, year FROM student JOIN takes ON student.ID = takes.ID WHERE student.ID = %s"
+        cursor.execute(sql, (ID,))
     data = cursor.fetchall()
 
-    return render_template('schedule.html', constData = constData, data = data)
+
+    return render_template('schedule.html', constData = constData, data = data, availableYears=availableYears)
 
 
 @app.route('/search', methods = ['GET', 'POST'])

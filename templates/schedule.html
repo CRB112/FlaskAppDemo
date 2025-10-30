@@ -12,6 +12,19 @@
         <div class="row">
             <h1>Schedule For {{ constData[0][1] }}</h1>
         </div>
+        <div class="row">
+            <form method="GET" action="/schedule">
+                <input type="hidden" name="studentID" value="{{ request.args.get('studentID') }}">
+                <label for="yearFilter" class="col-form-label">Filter by Year:</label>
+                <select id="yearFilter" name="selectYear" class="form-select" onchange="this.form.submit()">
+                    <option hidden value="">Filter</option>
+                    <option value="" {% if request.args.get('selectYear') == '' %}selected{% endif %}>None</option>
+                    {% for year in availableYears %}
+                        <option value="{{ year }}" {% if year == request.args.get('year')|int %}selected{% endif %}>{{ year }}</option>
+                    {% endfor %}
+                </select>
+            </form>
+        </div>
         <div class="row" style="max-height: 400px; overflow-y:auto">
             <table class="table table-striped">
                 <thead style="position: sticky; top:0">
