@@ -2,6 +2,9 @@ from flask import Flask, render_template, request, jsonify
 import config
 import pymysql
 
+# NOTE THIS DOES NOT CONTAIN THE REQUIRED ENVIRONMENT TO RUN
+# INSTALL FLASK AND PYMYSQL AS REQUIRED BY PROF...
+
 db = config.db1
 app = Flask(__name__)
 
@@ -69,7 +72,7 @@ def searchPage():
             checkIDSQL = "SELECT student.ID FROM student WHERE student.ID = %s"
             cursor.execute(checkIDSQL, (newID,))
             if not cursor.fetchone():
-                sql = "INSERT INTO student(ID, name, dept_name, tot_cred) VALUES(%s, %s, %s, %s)"
+                sql = "INSERT INTO student(ID, name, dept_name, tot_credits) VALUES(%s, %s, %s, %s)"
                 cursor.execute(sql, values)
             else:
                 return "ERROR"
@@ -88,8 +91,8 @@ def searchPage():
                 sql = "SELECT * FROM student WHERE student.name like %s"
                 cursor.execute(sql, ('%' + searchName + '%',))
             elif searchID:
-                sql = "SELECT * FROM student WHERE student.ID = %s"
-                cursor.execute(sql, (searchID,))
+                sql = "SELECT * FROM student WHERE student.ID like %s"
+                cursor.execute(sql, ('%' + searchID + '%',))
             else:
                 cursor.close()
                 return render_template('search.html', data=data)
